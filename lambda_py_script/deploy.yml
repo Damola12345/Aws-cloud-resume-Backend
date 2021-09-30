@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Backend for site view count
+Resources:
+  VisitorCounterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambdafunction.lambda_handler
+      Runtime: python3.8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: Visitors
+      Events:
+        VisitorCounter:
+          Type: Api
+          Properties:
+            Path: /get-visitor
+            Method: get
+      CodeUri: s3://damolacodelambdapyscript/2a8232bcd03612e53bded2c466e6ef96
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: Visitors
+      AttributeDefinitions:
+      - AttributeName: Site
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Site
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
